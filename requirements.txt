@@ -1,2 +1,5 @@
 django
 mysqlclient
+gunicorn
+pytest
+pytest-django

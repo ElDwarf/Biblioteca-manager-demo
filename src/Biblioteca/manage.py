@@ -20,3 +20,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+#export DJANGO_SETTINGS_MODULE=mysite.settings
