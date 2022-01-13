@@ -3,6 +3,15 @@
 {% block title  %} Libros {% endblock%}
 
 {% block body  %}
+<form method="GET" method=".">
+    <div class="col-span-6 sm:col-span-3 mb-6">
+        <label for="first-name" class="text-sm font-medium text-gray-700">Buscar</label>
+        <input type="text" name="name" value="{{ search_text }}" class="focus:ring-gray-500 focus:border-gray-500 shadow-sm sm:text-sm border-gray-400 rounded-md">
+        <button type="submit" class="py-1 px-2 border border-transparent shadow-sm text-sm font-small rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Buscar
+        </button>
+    </div>
+</form>
 <div class="flex flex-col">
     <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -23,7 +32,7 @@
                   Fecha Impresion
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
+                  Estado
                 </th>
                 <th scope="col" class="relative px-6 py-3">
                   <span class="sr-only">Edit</span>
