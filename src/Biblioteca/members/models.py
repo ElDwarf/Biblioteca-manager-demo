@@ -3,15 +3,12 @@ from django.contrib.auth.models import User
 
 from books.models import Book
 
+from .status_choices import MEMBER_STATUS_CHOICES, LOAN_STATUS_CHOICES
 
-class Member(models.Model):
-    STATUS_CHOICES = (
-        ('A', 'Activo'),
-        ('B', 'Baja'),
-    )
+class Member(models.Model):    
     name = models.CharField(max_length=50)
     email = models.EmailField(null=True, blank=True)
-    status = models.CharField(max_length=2, default='A', choices=STATUS_CHOICES)
+    status = models.CharField(max_length=2, default='A', choices=MEMBER_STATUS_CHOICES)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -20,15 +17,10 @@ class Member(models.Model):
 
 
 class Loan(models.Model):
-    STATUS_CHOICES = (
-        ('D', 'Devuelto'),
-        ('P', 'Prestado'),
-        ('V', 'Vencido')
-    )
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=2, default='P', choices=STATUS_CHOICES)
+    status = models.CharField(max_length=2, default='P', choices=LOAN_STATUS_CHOICES)
     due_date = models.DateTimeField()
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

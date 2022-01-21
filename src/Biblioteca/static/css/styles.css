@@ -1,0 +1,27 @@
+:root {
+    --danger: #DC3545;
+    --warning: #FFC108;
+    --success: #198754;
+  }
+  
+
+  .field-validation-danger {
+    color: var(--danger);
+    font-size: 0.875rem;
+  }
+
+  .title-validation-danger {
+    color: var(--danger);
+    font-size: 1.1rem;
+  }
+
+  .title-validation-success {
+    color: var(--success);
+    font-size: 1.1rem;    
+  }
+
+  select {
+    background-color: white;
+  }
+
+
