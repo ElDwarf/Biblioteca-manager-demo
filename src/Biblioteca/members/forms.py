@@ -2,7 +2,10 @@ from django.forms import ModelForm
 from django import forms
 from .models import Loan, Member, Book, User
 from datetime import datetime, timezone, timedelta
+import pytz
+from django.utils.timezone import make_aware
 from django.core.exceptions import ValidationError
+
 
 
 class LoanForm(ModelForm):
@@ -39,28 +42,30 @@ class LoanABookForm( forms.Form ):
 
         return form_options
        
-
-     
+ 
     def clean(self):
         cleaned_data = super().clean()
         
         utc_offset_minutes = cleaned_data.get('utc_offset_minutes')
- 
-        due_date = cleaned_data.get('due_date')       
+        due_date = cleaned_data.get('due_date')
         due_date = due_date + timedelta(minutes = utc_offset_minutes)
+        now = datetime.now()
 
-        now = datetime.now(timezone.utc)
+        #now = datetime.now(timezone.utc)            
+        #tz = pytz.timezone('UTC')
+        #due_date = make_aware(due_date, pytz.timezone('UTC'))
         
         if due_date <= now:
             message = 'Due time must be after current time'
             self.add_error('due_date', message)
+        
 
         if due_date == '':     
             message = 'Due time was not informated'
             self.add_error('due_date', message)
     
         return due_date
-
+    
         
     def clean_book(self):
         data = self.cleaned_data["book"]

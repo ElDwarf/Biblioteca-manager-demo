@@ -33,33 +33,29 @@ class LoanViews():
                 
         form_validation_message = {}
         form_values = {}
+        status_code = None
                 
         if request.method == 'POST':
             form = LoanABookForm(request.POST)
             if form.is_valid():                
                 form_validation_message['title'] = {'type': 'success', 'text': 'Loan successfully registered'}                
-                form.save( authorized_user=request.user  )
+                form.save( authorized_user=request.user )                
+                status_code = 201
                 form = LoanABookForm()
             else:
                 form_validation_message['title'] = {'type': 'danger', 'text': 'Please correct this errors'}
+                status_code = 400
                 
         elif request.method == 'GET':
             form_validation_message['title'] = {'type': 'empty', 'text': ''}
             form_validation_message['secondary-title'] = {'type': 'empty', 'text': ''}
-            form = LoanABookForm()
+            form = LoanABookForm()            
         
         form_options = form.get_form_options()
-        validation_message = ''
-        if not form_options['dict']['member']:
-            validation_message = ' There is not any available member to make a loan.'
-        if not form_options['dict']['book']:
-            validation_message += ' There is not any available book to make a loan.'                
-        form_validation_message['secondary_title'] = {'type': 'danger', 'text': validation_message}
         
-
-        if form_options['dict']['book'] and form_options['dict']['member']:        
+        if form_options['dict']['book'] and form_options['dict']['member']:            
+            if not status_code: status_code = 200
             for field in form:
-
                 error_messages = [] 
                 for message in field.errors:
                     error_messages.append(message )
@@ -68,21 +64,35 @@ class LoanViews():
                 form_validation_message[field.html_name] = error_messages
                 
                 field_value = field.value()
+                
+                if field.html_name in form_options['dict']:                    
+                    first_index = next(iter(form_options['dict'][field.html_name])) 
+                    form_values[field.html_name] = form_options['dict'][field.html_name][first_index]          
+                else:
+                    form_values[field.html_name] = {'id': 0, 'value': '' }
+                
                 if field_value:
                     if field.html_name in form_options['dict']:
-                        form_values[field.html_name] = form_options['dict'][field.html_name][int(field_value)]
+                        if type( int(field_value) ) == int:
+                            if int(field_value) in form_options['dict'][field.html_name]:                         
+                                form_values[field.html_name] = form_options['dict'][field.html_name][int(field_value)]
                     else:
                         form_values[field.html_name] = {'id': 0, 'value': field_value }
-                else:                
-                    if field.html_name in form_options['dict']:                    
-                        first_index = next(iter(form_options['dict'][field.html_name])) 
-                        form_values[field.html_name] = form_options['dict'][field.html_name][first_index]          
-                    else:
-                        form_values[field.html_name] = {'id': 0, 'value': '' }
-       
-        return render( request, 'loan_a_book.html',
+        else:            
+            validation_message = ''
+            if not status_code: status_code = 202
+            if not form_options['dict']['member']:
+                validation_message = ' There are not available members to make a loan.'                
+            if not form_options['dict']['book']:
+                validation_message += ' There are not more available books to loan.'                
+            form_validation_message['secondary_title'] = {'type': 'warning', 'text': validation_message}
+
+        
+        return render( request, 'loan_a_book.html',        
                 {'form_validation_message': form_validation_message,
                  'form_values':form_values,
-                 'form_options':form_options['list']}
+                 'form_options':form_options['list']
+                 },
+                 status = status_code,
         )
 
